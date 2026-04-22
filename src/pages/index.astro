@@ -1,0 +1,24 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import DashboardList from "@/components/DashboardList";
+import UserProfile from "@/components/UserProfile";
+import "@/styles/global.css";
+---
+
+<Layout title="Inicio - VitalTrack">
+    <main class="max-w-4xl mx-auto p-6 md:p-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-extrabold text-slate-900">
+                Resumen de Salud
+            </h1>
+            <p class="text-slate-500 mt-2">
+                Tus datos más recientes, seguros en tu dispositivo.
+            </p>
+        </header>
+
+        <UserProfile client:load />
+
+        <!-- Isla React: Se conecta a IndexedDB -->
+        <DashboardList client:load />
+    </main>
+</Layout>

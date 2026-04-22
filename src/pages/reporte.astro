@@ -1,0 +1,51 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ChartsView from "@/components/ChartsView";
+import "@/styles/global.css";
+import type { loadRenderers } from "astro:container";
+---
+
+<Layout title="Reportes - VitalTrack">
+    <main class="max-w-5xl mx-auto p-4 md:p-8 space-y-8">
+        <header class="mb-6">
+            <h1 class="text-3xl font-extrabold text-slate-900">
+                Análisis y Reportes
+            </h1>
+            <p class="text-slate-500 mt-2">
+                Visualiza la evolución de tus indicadores de salud.
+            </p>
+        </header>
+
+        <!-- Isla de Gráficos -->
+        <ChartsView client:load />
+
+        <div
+            class="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-4 flex items-start gap-3"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="text-blue-600 mt-0.5"
+                ><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"
+                ></path><path d="M12 8h.01"></path></svg
+            >
+            <div>
+                <h3 class="text-blue-800 font-bold text-sm">
+                    Consejo para tu médico
+                </h3>
+                <p class="text-blue-700 text-sm mt-1">
+                    Los gráficos son interactivos. Puedes pasar el mouse sobre
+                    los puntos para ver los valores exactos. Guarda una captura
+                    o imprime esta página para compartir en tu consulta.
+                </p>
+            </div>
+        </div>
+    </main>
+</Layout>

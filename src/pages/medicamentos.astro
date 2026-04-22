@@ -1,0 +1,36 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import MedManager from "@/components/MedManager";
+import MedicationLog from "@/components/MedicationLog";
+import "@/styles/global.css";
+---
+
+<Layout title="Medicamentos - VitalTrack">
+    <main class="max-w-4xl mx-auto p-6 md:p-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-extrabold text-slate-900">
+                Mis Medicamentos
+            </h1>
+            <p class="text-slate-500 mt-2">
+                Controla la adherencia a tu tratamiento diario.
+            </p>
+        </header>
+
+        <section class="space-y-6">
+            <!-- 1. Formulario para agregar (Colapsable) -->
+            <MedManager client:load />
+
+            <div class="flex items-center gap-2 mt-8 mb-4">
+                <div class="h-px bg-slate-200 grow"></div>
+                <span
+                    class="text-xs font-bold text-slate-400 uppercase tracking-wider"
+                    >Plan de hoy</span
+                >
+                <div class="h-px bg-slate-200 grow"></div>
+            </div>
+
+            <!-- 2. Lista de tareas diarias -->
+            <MedicationLog client:load />
+        </section>
+    </main>
+</Layout>

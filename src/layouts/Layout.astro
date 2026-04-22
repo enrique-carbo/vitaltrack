@@ -1,0 +1,183 @@
+---
+interface Props {
+    title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="description"
+            content="Diario Clínico Personal - VitalTrack"
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Usamos tu logo en /public -->
+        <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+        <meta name="generator" content={Astro.generator} />
+
+        <title>{title} - VitalTrack</title>
+
+        <!-- PWA Setup -->
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#2563eb" />
+
+        <!-- Script para el menú móvil (Se ejecuta en el cliente) -->
+        <script>
+            // Esperamos a que el DOM esté listo
+            document.addEventListener("DOMContentLoaded", () => {
+                const btn = document.getElementById("mobile-menu-btn");
+                const menu = document.getElementById("mobile-menu");
+
+                if (btn && menu) {
+                    btn.addEventListener("click", () => {
+                        // Alternar la clase 'hidden' para mostrar/ocultar
+                        menu.classList.toggle("hidden");
+                    });
+                }
+            });
+        </script>
+    </head>
+    <body
+        class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col"
+    >
+        <!-- NAV BAR -->
+        <header
+            class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm"
+        >
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <!-- LOGO -->
+                    <div class="flex items-center">
+                        <a
+                            href="/"
+                            class="flex items-center gap-2 focus:outline-none"
+                        >
+                            <!-- Logo SVG externo -->
+                            <img
+                                src="/logo.svg"
+                                alt="VitalTrack Logo"
+                                class="h-8 w-8"
+                            />
+                            <span
+                                class="font-bold text-xl text-blue-600 tracking-tight"
+                            >
+                                VitalTrack
+                            </span>
+                        </a>
+                    </div>
+
+                    <!-- DESKTOP MENU (Hidden on mobile) -->
+                    <div class="hidden md:flex items-center space-x-1">
+                        <a
+                            href="/"
+                            class="px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition-colors"
+                        >
+                            Inicio
+                        </a>
+                        <a
+                            href="/diario"
+                            class="px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition-colors"
+                        >
+                            Registro
+                        </a>
+                        <a
+                            href="/medicamentos"
+                            class="px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition-colors"
+                        >
+                            Medicamentos
+                        </a>
+                        <a
+                            href="/reporte"
+                            class="px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition-colors"
+                        >
+                            Reportes
+                        </a>
+                    </div>
+
+                    <!-- MOBILE MENU BUTTON (Hidden on desktop) -->
+                    <div class="flex items-center md:hidden">
+                        <button
+                            id="mobile-menu-btn"
+                            type="button"
+                            class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-blue-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors"
+                            aria-controls="mobile-menu"
+                            aria-expanded="false"
+                        >
+                            <span class="sr-only">Abrir menú principal</span>
+                            <!-- Icono Hamburguesa -->
+                            <svg
+                                class="block h-6 w-6"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MOBILE MENU PANEL (Hidden by default) -->
+            <div
+                class="hidden md:hidden bg-white border-t border-slate-100"
+                id="mobile-menu"
+            >
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a
+                        href="/"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50"
+                    >
+                        Inicio
+                    </a>
+                    <a
+                        href="/diario"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50"
+                    >
+                        Registro
+                    </a>
+                    <a
+                        href="/medicamentos"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50"
+                    >
+                        Medicamentos
+                    </a>
+                    <a
+                        href="/reporte"
+                        class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50"
+                    >
+                        Reportes
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="grow w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <slot />
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="bg-white border-t border-slate-200 mt-auto py-6">
+            <div
+                class="max-w-5xl mx-auto px-4 text-center text-sm text-slate-500"
+            >
+                <p>
+                    Creative Commons. VitalTrack 2026. Datos almacenados
+                    localmente en tu dispositivo.
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
