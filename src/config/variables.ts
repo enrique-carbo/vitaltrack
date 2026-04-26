@@ -1,3 +1,4 @@
+// src/config/variables.ts
 import { type VariableDefinition } from "@/types";
 import {
   Activity,
@@ -8,6 +9,38 @@ import {
   Wind,
   CircleSmall,
 } from "lucide-react";
+
+// 🔥 NUEVO: Exportar categorías para reutilizarlas en toda la app
+export const CATEGORIES = {
+  metabolic: {
+    id: "metabolic",
+    label: "Metabólicas",
+    emoji: "🩸",
+    description: "Glucosa, colesterol, etc.",
+    color: "purple",
+  },
+  cardiology: {
+    id: "cardiology",
+    label: "Cardiología",
+    emoji: "❤️",
+    description: "Presión arterial, frecuencia cardíaca",
+    color: "red",
+  },
+  anthropometric: {
+    id: "anthropometric",
+    label: "Antropométricas",
+    emoji: "⚖️",
+    description: "Peso, talla, IMC",
+    color: "green",
+  },
+  pulmonology: {
+    id: "pulmonology",
+    label: "Neumonología",
+    emoji: "🫁",
+    description: "Respiración, oxígeno",
+    color: "blue",
+  },
+} as const;
 
 export const CLINICAL_VARIABLES: VariableDefinition[] = [
   {
@@ -81,3 +114,13 @@ export const CLINICAL_VARIABLES: VariableDefinition[] = [
 // Helper para obtener una variable por ID
 export const getVariableById = (id: string) =>
   CLINICAL_VARIABLES.find((v) => v.id === id);
+
+// 🔥 NUEVO: Helper para obtener nombre legible de categoría
+export const getCategoryLabel = (categoryId: string): string => {
+  return CATEGORIES[categoryId as keyof typeof CATEGORIES]?.label || categoryId;
+};
+
+// 🔥 NUEVO: Helper para obtener todas las categorías únicas
+export const getUniqueCategories = () => {
+  return Object.values(CATEGORIES);
+};

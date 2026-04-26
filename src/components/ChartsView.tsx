@@ -14,36 +14,32 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+const MAX_RECORDS = 20; // Límite fijo de registros para el gráfico
+
 export default function ChartsView() {
   const [selectedVarId, setSelectedVarId] = useState(CLINICAL_VARIABLES[0].id);
-
-  // 1. Control de montaje en fases
   const [isMounted, setIsMounted] = useState(false);
-  const [isReady, setIsReady] = useState(false); // Nuevo estado para asegurar que el contenedor tiene tamaño
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
-
-    // Truco: setTimeout 0 empuja la ejecución al final del event loop,
-    // garantizando que el layout (CSS) se haya pintado y los anchos sean válidos.
     const timer = setTimeout(() => {
       setIsReady(true);
-    }, 0);
+    }, 100);
 
     return () => clearTimeout(timer);
   }, []);
 
-  const records = useLiveQuery(
-    () =>
-      db.measurements
-        .where("variableId")
-        .equals(selectedVarId)
-        .reverse()
-        .limit(100)
-        .reverse()
-        .toArray(),
-    [selectedVarId],
-  );
+  // Obtener solo los últimos MAX_RECORDS registros
+  const records = useLiveQuery(async () => {
+    const results = await db.measurements
+      .where("variableId")
+      .equals(selectedVarId)
+      .reverse() // Más recientes primero
+      .limit(MAX_RECORDS)
+      .toArray();
+    return results.reverse(); // Volver a orden cronológico (de más antiguo a más reciente)
+  }, [selectedVarId]);
 
   const currentConfig = CLINICAL_VARIABLES.find((v) => v.id === selectedVarId);
 
@@ -84,7 +80,7 @@ export default function ChartsView() {
         </select>
       </div>
 
-      {/* Contenedor */}
+      {/* Contenedor del gráfico */}
       <div className="w-full h-80 relative">
         {isMounted && isReady && chartData.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%" minWidth={300}>
@@ -138,16 +134,22 @@ export default function ChartsView() {
         ) : (
           <div className="flex items-center justify-center h-full text-slate-400">
             <p>
-              {!isMounted
+              {!isMounted || !isReady
                 ? "Cargando gráfico..."
-                : isReady && chartData.length === 0
+                : chartData.length === 0
                   ? `No hay datos para ${currentConfig?.label}`
-                  : "Preparando visualización..."}{" "}
-              {/* Mensaje durante el micro-delay */}
+                  : "Preparando visualización..."}
             </p>
           </div>
         )}
       </div>
+
+      {/* Info opcional: mostrar cuántos registros se están mostrando */}
+      {records && records.length > 0 && (
+        <div className="mt-3 text-center text-xs text-slate-400">
+          Mostrando últimos {records.length} registros
+        </div>
+      )}
     </div>
   );
 }

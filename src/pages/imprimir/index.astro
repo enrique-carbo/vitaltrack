@@ -1,11 +1,13 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { db } from "@/db/db";
-import { CLINICAL_VARIABLES, getVariableById } from "../../config/variables";
-import { formatTimestamp } from "../../utils/date";
+import { CLINICAL_VARIABLES, getVariableById } from "@/config/variables";
+import { formatTimestamp } from "@/utils/date";
+import { Printer } from "lucide-react";
 
 import PrintReportData from "@/components/PrintReportData";
 import "@/styles/print.css";
+import "@/styles/global.css";
 ---
 
 <Layout title="Reporte Médico - VitalTrack">
@@ -18,30 +20,15 @@ import "@/styles/print.css";
                 <h2 class="text-blue-900 font-bold">
                     Generar Informe para el Médico
                 </h2>
-                <p class="text-blue-700 text-sm">
-                    Este reporte contiene todos tus registros históricos en
-                    formato de tabla.
-                </p>
             </div>
             <button
                 onclick="window.print()"
-                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold shadow hover:bg-blue-700 transition flex items-center gap-2"
+                class="inline-flex items-center justify-center gap-1.5 md:gap-2 px-2.5 py-2 md:px-6 md:py-3 bg-blue-600 text-white rounded-lg font-semibold md:font-bold shadow-sm hover:bg-blue-700 hover:shadow transition-all duration-200 active:scale-95"
+                title="Imprimir reporte"
             >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    ><path d="M6 9V2h12v7"></path><path
-                        d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
-                    ></path><path d="M6 14h12v8H6z"></path></svg
-                >
-                Imprimir / Guardar PDF
+                <Printer size={16} className="md:w-5 md:h-5" />
+                <span class="hidden md:inline">Imprimir / Guardar PDF</span>
+                <span class="md:hidden">PDF</span>
             </button>
         </div>
     </div>
