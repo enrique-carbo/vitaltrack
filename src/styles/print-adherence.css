@@ -1,0 +1,244 @@
+/* src/styles/print-adherence.css */
+
+/* ============================================
+   ESTILOS BASE (Pantalla)
+   ============================================ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.stat-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: #555;
+}
+
+/* Colores para pantalla */
+.adherence-general {
+    color: #2563eb;
+}
+.adherence-taken {
+    color: #22c55e;
+}
+.adherence-missed {
+    color: #f59e0b;
+}
+.adherence-meds {
+    color: #8b5cf6;
+}
+
+/* Tabla */
+.adherence-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.adherence-table th {
+    background: #f8fafc;
+    padding: 12px;
+    font-weight: 600;
+}
+
+.adherence-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Barra de adherencia - solo visible en pantalla */
+.bar-container {
+    display: inline-block;
+    width: 100px;
+    height: 8px;
+    background-color: #e2e8f0;
+    border-radius: 4px;
+    margin-right: 8px;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.bar-high {
+    background-color: #22c55e;
+}
+.bar-medium {
+    background-color: #f59e0b;
+}
+.bar-low {
+    background-color: #ef4444;
+}
+
+/* Estados */
+.status-optimal {
+    color: #22c55e;
+}
+.status-regular {
+    color: #f59e0b;
+}
+.status-critical {
+    color: #ef4444;
+}
+
+/* Summary box */
+.summary-box {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 20px 0;
+}
+
+.med-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* ============================================
+   ESTILOS PARA IMPRESIÓN (Solo porcentaje, sin barra)
+   ============================================ */
+@media print {
+    @page {
+        size: A4;
+        margin: 1.5cm;
+    }
+
+    /* Reset de colores y fondos */
+    body,
+    .stat-card,
+    .adherence-table td,
+    .adherence-table th,
+    .summary-box {
+        background: white !important;
+        color: black !important;
+    }
+
+    /* Ocultar elementos de UI */
+    nav,
+    footer,
+    .no-print {
+        display: none !important;
+    }
+
+    main {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .print-header {
+        border-bottom: 2px solid black;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+    }
+
+    .stat-card {
+        border: 2px solid black;
+    }
+
+    /* Tabla */
+    .adherence-table {
+        box-shadow: none;
+    }
+
+    .adherence-table th {
+        background: #f0f0f0 !important;
+        font-weight: bold;
+    }
+
+    /* Punto del medicamento */
+    .med-color-dot {
+        background-color: #666 !important;
+        border: 1px solid black;
+    }
+
+    /* IMPORTANTE: Ocultar la barra en impresión */
+    .bar-container {
+        display: none !important;
+    }
+
+    /* Mostrar solo el porcentaje */
+    .adherence-percent {
+        font-weight: bold;
+        font-size: 11px;
+        color: black;
+        display: inline-block !important;
+    }
+
+    /* Ajustar la celda para que el porcentaje se vea bien solo */
+    .adherence-cell {
+        text-align: center;
+    }
+
+    /* Estados - sin color */
+    .status-optimal,
+    .status-regular,
+    .status-critical {
+        color: black !important;
+        font-weight: normal;
+    }
+
+    /* Ocultar íconos */
+    .summary-item svg {
+        display: none !important;
+    }
+
+    /* Leyenda */
+    .adherence-legend {
+        border-top: 1px solid black;
+        padding-top: 15px;
+    }
+
+    .legend-color,
+    .legend-optimal,
+    .legend-regular,
+    .legend-critical {
+        background-color: #ccc !important;
+    }
+
+    /* Footer */
+    .print-footer {
+        border-top: 1px solid black;
+    }
+
+    /* Forzar textos negros */
+    h1,
+    h2,
+    h3,
+    p,
+    span,
+    div,
+    td,
+    th,
+    .stat-value,
+    .stat-label {
+        color: black !important;
+    }
+}

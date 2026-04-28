@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import PrintAdherenceReport from "@/components/PrintAdherenceReport";
+import "@/styles/global.css";
+import "@/styles/print-adherence.css";
+---
+
+<Layout title="Reporte de Adherencia - VitalTrack">
+    <PrintAdherenceReport client:load />
+</Layout>
