@@ -94,9 +94,9 @@ export default function PrintReportData() {
             <table className="print-table">
               <thead>
                 <tr>
-                  <th>Fecha y Hora</th>
+                  <th>Fecha</th>
                   <th>Variable</th>
-                  <th>Valor Registrado</th>
+                  <th>Registro</th>
                   <th>Notas</th>
                 </tr>
               </thead>
@@ -157,9 +157,9 @@ export default function PrintReportData() {
               <table className="print-table">
                 <thead>
                   <tr>
-                    <th>Fecha y Hora</th>
+                    <th>Fecha</th>
                     <th>Variable</th>
-                    <th>Valor Registrado</th>
+                    <th>Registro</th>
                     <th>Notas</th>
                   </tr>
                 </thead>

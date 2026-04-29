@@ -198,14 +198,12 @@ export default function PrintAdherenceReport() {
             <h2 className="text-blue-900 font-bold">
               Reporte de Adherencia al Tratamiento
             </h2>
-            <p className="text-blue-700 text-sm">
-              Control mensual de cumplimiento de medicamentos
-            </p>
+            <p className="text-blue-700 text-sm">Control mensual</p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex-col items-center gap-3">
             {/* Selector de mes */}
-            <div className="flex items-center gap-2 bg-white rounded-lg px-3 py-1.5">
+            <div className="flex items-center gap-2 bg-white rounded-lg px-3 py-1.5 mb-4">
               <button
                 onClick={prevMonth}
                 className="px-2 py-1 hover:bg-slate-100 rounded"
@@ -296,48 +294,106 @@ export default function PrintAdherenceReport() {
           <h3 className="text-lg font-bold text-gray-800 mb-3">
             Detalle por Medicamento
           </h3>
-          <table className="adherence-table">
-            <thead>
-              <tr>
-                <th>Medicamento</th>
-                <th>Dosis</th>
-                <th>Horario</th>
-                <th>Tomas</th>
-                <th>Adherencia</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {medicationStats.map((med) => (
-                <tr key={med.id}>
-                  <td className="med-name-cell">
+
+          {/* Tabla de medicamentos - Desktop */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="adherence-table">
+              <thead>
+                <tr>
+                  <th>Medicamento</th>
+                  <th>Dosis</th>
+                  <th>Horario</th>
+                  <th>Tomas</th>
+                  <th>Adherencia</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {medicationStats.map((med) => (
+                  <tr key={med.id}>
+                    <td className="med-name-cell">
+                      <div
+                        className="med-color-dot"
+                        style={{ backgroundColor: med.color }}
+                      />
+                      {med.name}
+                    </td>
+                    <td>{med.dosage}</td>
+                    <td className="text-center">{med.time}</td>
+                    <td className="text-center">
+                      {med.taken} / {med.expected}
+                    </td>
+                    <td className="adherence-cell">
+                      <div className="bar-container">
+                        <div
+                          className={`bar-fill ${med.adherence >= 80 ? "bar-high" : med.adherence >= 50 ? "bar-medium" : "bar-low"}`}
+                          style={{ width: `${med.adherence}%` }}
+                        />
+                      </div>
+                      <span className="adherence-percent">
+                        {med.adherence}%
+                      </span>
+                    </td>
+                    <td className={`status-cell ${med.statusClass}`}>
+                      {med.status}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Vista de tarjetas - Móvil */}
+          <div className="md:hidden space-y-3">
+            {medicationStats.map((med) => (
+              <div
+                key={med.id}
+                className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
                     <div
                       className="med-color-dot"
                       style={{ backgroundColor: med.color }}
                     />
-                    {med.name}
-                  </td>
-                  <td>{med.dosage}</td>
-                  <td className="text-center">{med.time}</td>
-                  <td className="text-center">
-                    {med.taken} / {med.expected}
-                  </td>
-                  <td className="adherence-cell">
-                    <div className="bar-container">
-                      <div
-                        className={`bar-fill ${med.adherence >= 80 ? "bar-high" : med.adherence >= 50 ? "bar-medium" : "bar-low"}`}
-                        style={{ width: `${med.adherence}%` }}
-                      />
-                    </div>
-                    <span className="adherence-percent">{med.adherence}%</span>
-                  </td>
-                  <td className={`status-cell ${med.statusClass}`}>
+                    <span className="font-bold text-gray-800">{med.name}</span>
+                  </div>
+                  <span className={`text-sm font-semibold ${med.statusClass}`}>
                     {med.status}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-sm mb-3">
+                  <div>
+                    <span className="text-gray-400 text-xs">Dosis</span>
+                    <p className="font-medium">{med.dosage}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400 text-xs">Horario</span>
+                    <p className="font-medium">{med.time}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400 text-xs">Tomas</span>
+                    <p className="font-medium">
+                      {med.taken} / {med.expected}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400 text-xs">Adherencia</span>
+                    <p className="font-bold text-lg">{med.adherence}%</p>
+                  </div>
+                </div>
+
+                {/* Barra de adherencia simplificada para móvil */}
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full ${med.adherence >= 80 ? "bg-green-500" : med.adherence >= 50 ? "bg-yellow-500" : "bg-red-500"}`}
+                    style={{ width: `${med.adherence}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
 
           {/* Resumen de mejores/peores días - con verificación segura */}
           <div className="summary-box">

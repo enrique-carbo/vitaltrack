@@ -1,5 +1,7 @@
+//src/db/db.ts
+
 import { Dexie, type Table } from "dexie";
-import type { MeasurementRecord, MedicationRecord, LogEntry } from "../types";
+import type { MeasurementRecord, MedicationRecord, LogEntry } from "@/types";
 
 // 1. Definimos una CLASE que extiende de Dexie
 // Usamos '!' (definite assignment assertion) porque Dexie inicializa estas propiedades mágicamente
