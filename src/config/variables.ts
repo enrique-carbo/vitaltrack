@@ -8,6 +8,8 @@ import {
   CandyOff,
   Wind,
   CircleSmall,
+  Brain,
+  Frown,
 } from "lucide-react";
 
 // 🔥 NUEVO: Exportar categorías para reutilizarlas en toda la app
@@ -39,6 +41,13 @@ export const CATEGORIES = {
     emoji: "🫁",
     description: "Respiración, oxígeno",
     color: "blue",
+  },
+  subjective: {
+    id: "subjective",
+    label: "Subjetivas",
+    emoji: "🧠",
+    description: "Dolor, bienestar, síntomas",
+    color: "pink",
   },
 } as const;
 
@@ -108,6 +117,15 @@ export const CLINICAL_VARIABLES: VariableDefinition[] = [
     unit: "%",
     icon: CircleSmall,
     validation: { min: 50, max: 100 },
+  },
+  {
+    id: "pain",
+    label: "Nivel de Dolor",
+    category: "subjective",
+    inputType: "range",
+    unit: "/10",
+    icon: Frown,
+    validation: { min: 0, max: 10, step: 1 },
   },
 ];
 

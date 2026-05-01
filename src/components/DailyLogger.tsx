@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { db } from "@/db/db";
-import { CLINICAL_VARIABLES } from "@/config/variables";
+import { CLINICAL_VARIABLES, getVariableById } from "@/config/variables";
 import { Toast } from "@/components/ui/Toast";
 import {
   Plus,
@@ -9,6 +9,8 @@ import {
   HeartPulse,
   Weight,
   CheckCircle2,
+  Brain,
+  Frown,
 } from "lucide-react";
 import {
   toLocalISODate,
@@ -19,13 +21,13 @@ import {
 type FormValues = Record<string, number | Record<string, number>>;
 
 // Definimos las categorías para las pestañas
-// IMPORTANTE: Los 'id' deben coincidir exactamente con 'category' en variables.ts
 const CATEGORIES = [
   { id: "all", label: "Todos", icon: CheckCircle2 },
   { id: "metabolic", label: "Metabólico", icon: Droplets },
   { id: "cardiology", label: "Cardiológico", icon: HeartPulse },
   { id: "anthropometric", label: "Antropométrico", icon: Weight },
   { id: "pulmonology", label: "Pulmonar", icon: Activity },
+  { id: "subjective", label: "Subjetivas", icon: Brain },
 ];
 
 export default function DailyLogger() {
@@ -34,11 +36,7 @@ export default function DailyLogger() {
   const [values, setValues] = useState<FormValues>({});
   const [notes, setNotes] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-
-  // Estado para la pestaña activa
   const [activeTab, setActiveTab] = useState("all");
-
-  // Estado para controlar el Toast
   const [toast, setToast] = useState<{
     show: boolean;
     message: string;
@@ -49,7 +47,6 @@ export default function DailyLogger() {
     type: "success",
   });
 
-  // Función helper para mostrar el toast
   const showToast = (
     message: string,
     type: "success" | "error" = "success",
@@ -57,7 +54,6 @@ export default function DailyLogger() {
     setToast({ show: true, message, type });
   };
 
-  // Efecto para ocultar el toast automáticamente después de 3 segundos
   useEffect(() => {
     if (toast.show) {
       const timer = setTimeout(() => {
@@ -67,7 +63,11 @@ export default function DailyLogger() {
     }
   }, [toast.show]);
 
-  const handleChange = (varId: string, val: number) => {
+  const handleNumberChange = (varId: string, val: number) => {
+    setValues((prev) => ({ ...prev, [varId]: val }));
+  };
+
+  const handleRangeChange = (varId: string, val: number) => {
     setValues((prev) => ({ ...prev, [varId]: val }));
   };
 
@@ -92,13 +92,10 @@ export default function DailyLogger() {
     try {
       const timestamp = localDateTimeToTimestamp(date, time);
 
-      // FILTRADO CLAVE: Solo enviamos entradas que tienen un valor definido
       const entries = Object.entries(values)
         .filter(([_, value]) => {
-          // Si es número, chequeamos que no sea NaN
           if (typeof value === "number") return !isNaN(value);
-          // Si es objeto (compuesto), chequeamos que al menos una propiedad tenga valor
-          if (typeof value === "object") {
+          if (typeof value === "object" && value !== null) {
             return Object.values(value).some(
               (v) => v !== undefined && !isNaN(v),
             );
@@ -122,11 +119,7 @@ export default function DailyLogger() {
       }
 
       await db.measurements.bulkAdd(entries);
-
-      // Éxito: Mostramos Toast
       showToast(`✅ ${entries.length} registro(s) guardado(s) con éxito.`);
-
-      // Resetear solo valores, mantener fecha/hora
       setValues({});
       setNotes("");
     } catch (error) {
@@ -137,11 +130,16 @@ export default function DailyLogger() {
     }
   };
 
-  // --- LÓGICA CORREGIDA DE PESTAÑAS ---
   const visibleVariables = CLINICAL_VARIABLES.filter((variable) => {
     if (activeTab === "all") return true;
     return variable.category === activeTab;
   });
+
+  // Obtener el valor actual para range
+  const getRangeValue = (varId: string): number => {
+    const val = values[varId];
+    return typeof val === "number" ? val : 0;
+  };
 
   return (
     <form
@@ -180,7 +178,7 @@ export default function DailyLogger() {
         </div>
       </div>
 
-      {/* NAVEGACIÓN POR PESTAÑAS (CATEGORÍAS) */}
+      {/* Navegación por pestañas */}
       <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-1 overflow-x-auto">
         {CATEGORIES.map((cat) => {
           const Icon = cat.icon;
@@ -203,15 +201,16 @@ export default function DailyLogger() {
         })}
       </div>
 
-      {/* ÁREA DE FORMULARIO DINÁMICO */}
+      {/* Área de formulario dinámico */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
         {visibleVariables.map((variable) => (
-          <div key={variable.id} className="space-y-2 block">
+          <div key={variable.id} className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
               <variable.icon size={16} className="text-blue-600" />
               {variable.label}
             </label>
 
+            {/* Input tipo número */}
             {variable.inputType === "number" && (
               <div className="relative">
                 <input
@@ -221,14 +220,13 @@ export default function DailyLogger() {
                   max={variable.validation?.max}
                   placeholder="0"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-                  // Control seguro de valor para evitar "undefined" en el input
                   value={
                     values[variable.id] !== undefined
                       ? String(values[variable.id])
                       : ""
                   }
                   onChange={(e) =>
-                    handleChange(variable.id, parseFloat(e.target.value))
+                    handleNumberChange(variable.id, parseFloat(e.target.value))
                   }
                 />
                 {variable.unit && (
@@ -239,20 +237,57 @@ export default function DailyLogger() {
               </div>
             )}
 
+            {/* Input tipo rango (Escala de Dolor) */}
+            {variable.inputType === "range" && (
+              <div className="space-y-3">
+                <input
+                  type="range"
+                  min={variable.validation?.min || 0}
+                  max={variable.validation?.max || 10}
+                  step={variable.validation?.step || 1}
+                  value={getRangeValue(variable.id)}
+                  onChange={(e) =>
+                    handleRangeChange(variable.id, parseInt(e.target.value))
+                  }
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                />
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-gray-400">Sin dolor</span>
+                  <span className="text-2xl font-bold text-blue-600">
+                    {getRangeValue(variable.id)}
+                  </span>
+                  <span className="text-xs text-gray-400">Dolor máximo</span>
+                </div>
+                {/* Emojis según nivel de dolor */}
+                <div className="flex justify-between text-xl">
+                  <span>😊</span>
+                  <span>😌</span>
+                  <span>😐</span>
+                  <span>😕</span>
+                  <span>😟</span>
+                  <span>😣</span>
+                  <span>😖</span>
+                  <span>😩</span>
+                  <span>😫</span>
+                  <span>😢</span>
+                  <span>😭</span>
+                </div>
+              </div>
+            )}
+
+            {/* Input tipo compuesto (Presión Arterial) */}
             {variable.inputType === "composite" && variable.subFields && (
-              <div className="grid grid-cols-2 gap-2 bg-gray-50 rounded-lg border border-gray-100">
+              <div className="grid grid-cols-2 gap-2 bg-gray-50 rounded-lg border border-gray-100 p-2">
                 {variable.subFields.map((sub) => {
-                  // Aseguramos que currentComposite sea siempre un objeto
                   const currentComposite =
                     (values[variable.id] as Record<string, number>) || {};
-
                   return (
-                    <div key={sub.key} className="relative w-full">
+                    <div key={sub.key} className="relative">
                       <input
                         type="number"
                         min={sub.validation?.min}
                         max={sub.validation?.max}
-                        className="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 outline-none mb-1"
+                        className="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 outline-none"
                         placeholder="0"
                         value={
                           currentComposite[sub.key] !== undefined
@@ -267,15 +302,10 @@ export default function DailyLogger() {
                           )
                         }
                       />
-
-                      {/* Contenedor inferior: Label (izquierda) + Unidad (derecha) */}
-                      <div className="flex justify-between items-center w-full text-xs text-gray-500 h-4">
+                      <div className="flex justify-between items-center w-full text-xs text-gray-500 mt-1">
                         <span>{sub.label}</span>
-
                         {sub.unit && (
-                          <span className="text-gray-400 font-medium">
-                            {sub.unit}
-                          </span>
+                          <span className="text-gray-400">{sub.unit}</span>
                         )}
                       </div>
                     </div>
@@ -314,7 +344,7 @@ export default function DailyLogger() {
         </div>
       </div>
 
-      {/* Renderizado del Toast */}
+      {/* Toast */}
       {toast.show && (
         <Toast
           message={toast.message}

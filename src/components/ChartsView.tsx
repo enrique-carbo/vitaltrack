@@ -50,6 +50,7 @@ export default function ChartsView() {
         fullDate: formatTimestamp(r.timestamp),
       };
 
+      // 🔥 CORREGIDO: range ahora funciona igual que number
       if (typeof r.value === "number") {
         point[currentConfig?.label || "Valor"] = r.value;
       } else if (currentConfig?.subFields) {
@@ -62,6 +63,14 @@ export default function ChartsView() {
 
   const colors = ["#2563eb", "#dc2626", "#16a34a", "#d97706"];
 
+  // 🔥 CORREGIDO: Filtrar variables que tienen datos numéricos (number o range)
+  const chartableVariables = CLINICAL_VARIABLES.filter(
+    (v) =>
+      v.inputType === "number" ||
+      v.inputType === "range" ||
+      v.inputType === "composite",
+  );
+
   return (
     <div className="bg-white p-2 md:p-4 rounded-xl shadow-sm border border-slate-200">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
@@ -72,9 +81,9 @@ export default function ChartsView() {
           onChange={(e) => setSelectedVarId(e.target.value)}
           className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg p-2.5"
         >
-          {CLINICAL_VARIABLES.map((v) => (
+          {chartableVariables.map((v) => (
             <option key={v.id} value={v.id}>
-              {v.label}
+              {v.label} {v.inputType === "range"}
             </option>
           ))}
         </select>
@@ -110,15 +119,20 @@ export default function ChartsView() {
               />
               <Legend />
 
-              {currentConfig?.inputType === "number" ? (
+              {/* 🔥 CORREGIDO: range se trata como number */}
+              {currentConfig?.inputType === "number" ||
+              currentConfig?.inputType === "range" ? (
                 <Line
                   type="monotone"
                   dataKey={currentConfig.label}
                   stroke={colors[0]}
                   strokeWidth={2}
+                  dot={{ r: 3 }}
+                  activeDot={{ r: 5 }}
                 />
-              ) : (
-                currentConfig?.subFields?.map((sub, index) => (
+              ) : currentConfig?.inputType === "composite" &&
+                currentConfig?.subFields ? (
+                currentConfig.subFields.map((sub, index) => (
                   <Line
                     key={sub.key}
                     type="monotone"
@@ -128,7 +142,7 @@ export default function ChartsView() {
                     name={`${currentConfig.label} - ${sub.label}`}
                   />
                 ))
-              )}
+              ) : null}
             </LineChart>
           </ResponsiveContainer>
         ) : (
