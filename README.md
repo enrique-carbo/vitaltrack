@@ -3,6 +3,7 @@
 ![VitalTrack Banner](https://img.shields.io/badge/Astro-v6.1.0-blue?style=flat-square)
 ![VitalTrack Badge](https://img.shields.io/badge/React-v19.2.5-black?style=flat-square)
 ![VitalTrack Badge](https://img.shields.io/badge/PWA-Offline--Installable-success?style=flat-square)
+![VitalTrack Badge](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
 **Diario Clínico Personal - Offline-First & 100% Privado**
 
@@ -100,6 +101,10 @@ vitaltrack/
 | **logs** | `id, medicationId, timestamp, taken, skipped` | Registro de adherencia diaria. |
 | **settings** | `key, value` | Perfil (Estatura, Nombre) y preferencias. |
 
+## 📚 Documentación
+
+- [Esquema de Base de Datos](./docs/SCHEMA.md) - Estructura de IndexedDB
+
 ## 🖨️ Reportes
 
 ### Reporte de Variables Clínicas (`/imprimir`)
@@ -120,19 +125,21 @@ VitalTrack implementa medidas para garantizar la integridad del código:
 - **Gestor de Paquetes (pnpm):** Se fuerza el uso de `pnpm` vía script `preinstall`
 - **Política de Cuarentena:** Bloquea paquetes publicados hace menos de 24 horas
 
+## 📄 Licencia
+
+Este proyecto está bajo la licencia **MIT**. Esto significa que puedes:
+
+- ✅ Usar el código comercialmente
+- ✅ Modificar y distribuir el código
+- ✅ Usarlo en proyectos privados
+- ⚠️ Incluir el aviso de copyright original
+
+Para más detalles, consulta el archivo [LICENSE](./LICENSE).
+
+---
+
 ## 🧑‍💻 Desarrollado por
 
-Proyecto enfocado en arquitectura moderna Offline-First, privacidad del usuario y rendimiento.
+Este proyecto fue desarrollado como un ejercicio de arquitectura moderna Offline-First, enfocado en la privacidad del usuario y el rendimiento.
 
 **Aviso Médico:** Herramienta de registro personal. No sustituye consejo médico profesional.
-
-
-## Cambios principales:
-
-1. ✅ Nuevas características (Gráficos con límite, filtrado por categorías)
-2. ✅ Reporte de adherencia a medicamentos
-3. ✅ Estructura actualizada con nuevos componentes
-4. ✅ Nueva página `/adherencia`
-5. ✅ Nuevos CSS (`print-adherence.css`)
-6. ✅ Simplificada la sección de seguridad (menos detalles técnicos)
-7. ✅ Añadida nota sobre impresión optimizada para blanco y negro
